@@ -8,16 +8,7 @@
  "field_order": [
   "building_information",
   "building_code",
-  "building_name",
-  "building_type",
-  "column_break_1",
-  "status",
-  "is_visitor_accessible",
-  "section_break_1",
-  "contact_person",
-  "contact_phone",
-  "section_break_gates",
-  "gates_table"
+  "building_name"
  ],
  "fields": [
   {
@@ -37,66 +28,6 @@
    "reqd": 1
   },
   {
-   "description": "\u0e1b\u0e23\u0e30\u0e40\u0e20\u0e17\u0e02\u0e2d\u0e07\u0e2d\u0e32\u0e04\u0e32\u0e23",
-   "fieldname": "building_type",
-   "fieldtype": "Select",
-   "in_list_view": 1,
-   "label": "\u0e1b\u0e23\u0e30\u0e40\u0e20\u0e17\u0e2d\u0e32\u0e04\u0e32\u0e23",
-   "options": "\n\u0e2d\u0e32\u0e04\u0e32\u0e23\u0e2a\u0e33\u0e19\u0e31\u0e01\u0e07\u0e32\u0e19\n\u0e42\u0e23\u0e07\u0e07\u0e32\u0e19\u0e1c\u0e25\u0e34\u0e15\n\u0e04\u0e25\u0e31\u0e07\u0e2a\u0e34\u0e19\u0e04\u0e49\u0e32\n\u0e2d\u0e32\u0e04\u0e32\u0e23\u0e1b\u0e23\u0e30\u0e0a\u0e38\u0e21\n\u0e2b\u0e2d\u0e1e\u0e31\u0e01\u0e1e\u0e19\u0e31\u0e01\u0e07\u0e32\u0e19\n\u0e2d\u0e32\u0e04\u0e32\u0e23\u0e08\u0e2d\u0e14\u0e23\u0e16\n\u0e1e\u0e37\u0e49\u0e19\u0e17\u0e35\u0e48\u0e1e\u0e34\u0e40\u0e28\u0e29\n\u0e2d\u0e37\u0e48\u0e19\u0e46",
-   "reqd": 1
-  },
-  {
-   "fieldname": "column_break_1",
-   "fieldtype": "Column Break"
-  },
-  {
-   "default": "\u0e40\u0e1b\u0e34\u0e14\u0e43\u0e0a\u0e49\u0e07\u0e32\u0e19",
-   "fieldname": "status",
-   "fieldtype": "Select",
-   "in_list_view": 1,
-   "label": "\u0e2a\u0e16\u0e32\u0e19\u0e30\u0e2d\u0e32\u0e04\u0e32\u0e23",
-   "options": "\u0e40\u0e1b\u0e34\u0e14\u0e43\u0e0a\u0e49\u0e07\u0e32\u0e19\n\u0e1b\u0e34\u0e14\u0e1b\u0e23\u0e31\u0e1a\u0e1b\u0e23\u0e38\u0e07\n\u0e1b\u0e34\u0e14\u0e43\u0e0a\u0e49\u0e07\u0e32\u0e19\n\u0e1a\u0e33\u0e23\u0e38\u0e07\u0e23\u0e31\u0e01\u0e29\u0e32\n\u0e09\u0e38\u0e01\u0e40\u0e09\u0e34\u0e19",
-   "reqd": 1
-  },
-  {
-   "default": "1 (\u0e2b\u0e23\u0e37\u0e2d\u0e40\u0e0a\u0e47\u0e04\u0e16\u0e39\u0e01)",
-   "description": "\u0e40\u0e0a\u0e47\u0e04\u0e40\u0e1e\u0e37\u0e48\u0e2d\u0e40\u0e1b\u0e34\u0e14\u0e43\u0e2b\u0e49\u0e1c\u0e39\u0e49\u0e40\u0e22\u0e35\u0e48\u0e22\u0e21\u0e2a\u0e32\u0e21\u0e32\u0e23\u0e16\u0e40\u0e02\u0e49\u0e32\u0e2d\u0e32\u0e04\u0e32\u0e23\u0e19\u0e35\u0e49\u0e44\u0e14\u0e49",
-   "fieldname": "is_visitor_accessible",
-   "fieldtype": "Check",
-   "in_list_view": 1,
-   "label": "\u0e40\u0e1b\u0e34\u0e14\u0e43\u0e2b\u0e49\u0e1c\u0e39\u0e49\u0e40\u0e22\u0e35\u0e48\u0e22\u0e21\u0e40\u0e02\u0e49\u0e32\u0e44\u0e14\u0e49"
-  },
-  {
-   "fieldname": "section_break_1",
-   "fieldtype": "Section Break",
-   "label": "\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e15\u0e34\u0e14\u0e15\u0e48\u0e2d\u0e41\u0e25\u0e30\u0e1c\u0e39\u0e49\u0e23\u0e31\u0e1a\u0e1c\u0e34\u0e14\u0e0a\u0e2d\u0e1a"
-  },
-  {
-   "description": "\u0e0a\u0e37\u0e48\u0e2d\u0e1c\u0e39\u0e49\u0e23\u0e31\u0e1a\u0e1c\u0e34\u0e14\u0e0a\u0e2d\u0e1a\u0e2b\u0e23\u0e37\u0e2d\u0e1c\u0e39\u0e49\u0e08\u0e31\u0e14\u0e01\u0e32\u0e23\u0e2d\u0e32\u0e04\u0e32\u0e23",
-   "fieldname": "contact_person",
-   "fieldtype": "Data",
-   "label": "\u0e1c\u0e39\u0e49\u0e23\u0e31\u0e1a\u0e1c\u0e34\u0e14\u0e0a\u0e2d\u0e1a\u0e2d\u0e32\u0e04\u0e32\u0e23",
-   "reqd": 1
-  },
-  {
-   "description": "\u0e40\u0e1a\u0e2d\u0e23\u0e4c\u0e42\u0e17\u0e23\u0e28\u0e31\u0e1e\u0e17\u0e4c\u0e15\u0e34\u0e14\u0e15\u0e48\u0e2d\u0e1c\u0e39\u0e49\u0e23\u0e31\u0e1a\u0e1c\u0e34\u0e14\u0e0a\u0e2d\u0e1a",
-   "fieldname": "contact_phone",
-   "fieldtype": "Phone",
-   "label": "\u0e40\u0e1a\u0e2d\u0e23\u0e4c\u0e42\u0e17\u0e23\u0e15\u0e34\u0e14\u0e15\u0e48\u0e2d",
-   "reqd": 1
-  },
-  {
-   "fieldname": "section_break_gates",
-   "fieldtype": "Section Break",
-   "label": "\u0e08\u0e38\u0e14\u0e40\u0e02\u0e49\u0e32\u0e2d\u0e2d\u0e01 (Gates)"
-  },
-  {
-   "fieldname": "gates_table",
-   "fieldtype": "Table",
-   "label": "\u0e23\u0e32\u0e22\u0e01\u0e32\u0e23\u0e08\u0e38\u0e14\u0e40\u0e02\u0e49\u0e32\u0e2d\u0e2d\u0e01",
-   "options": "Building Gate"
-  },
-  {
    "fieldname": "building_information",
    "fieldtype": "Section Break",
    "label": "\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e2d\u0e32\u0e04\u0e32\u0e23"
@@ -105,7 +36,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-07-17 16:17:18.333698",
+ "modified": "2025-08-20 12:50:39.575464",
  "modified_by": "Administrator",
  "module": "SCANGO",
  "name": "Building Management",
