@@ -1,0 +1,68 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-08-24 11:53:09.153125",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "first_name",
+  "last_name",
+  "date_time",
+  "door_entryexit_status"
+ ],
+ "fields": [
+  {
+   "fieldname": "first_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "\u0e0a\u0e37\u0e48\u0e2d",
+   "reqd": 1
+  },
+  {
+   "fieldname": "last_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "\u0e19\u0e32\u0e21\u0e2a\u0e01\u0e38\u0e25",
+   "reqd": 1
+  },
+  {
+   "fieldname": "date_time",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "\u0e27\u0e31\u0e19/\u0e40\u0e27\u0e25\u0e32",
+   "reqd": 1
+  },
+  {
+   "fieldname": "door_entryexit_status",
+   "fieldtype": "Data",
+   "label": "\u0e2a\u0e16\u0e32\u0e19\u0e30\u0e01\u0e32\u0e23\u0e40\u0e02\u0e49\u0e32-\u0e2d\u0e2d\u0e01\u0e1b\u0e23\u0e30\u0e15\u0e39",
+   "reqd": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-08-24 21:31:05.208618",
+ "modified_by": "Administrator",
+ "module": "SCANGO",
+ "name": "Visitor Gate Pass",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

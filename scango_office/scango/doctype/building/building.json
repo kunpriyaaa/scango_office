@@ -1,0 +1,65 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "BLD-.####",
+ "creation": "2025-07-17 15:23:27.110516",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "building_information",
+  "building_code",
+  "building_name"
+ ],
+ "fields": [
+  {
+   "description": "\u0e23\u0e2b\u0e31\u0e2a\u0e40\u0e09\u0e1e\u0e32\u0e30\u0e02\u0e2d\u0e07\u0e2d\u0e32\u0e04\u0e32\u0e23 \u0e40\u0e0a\u0e48\u0e19 BLD001, MAIN-01",
+   "fieldname": "building_code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "\u0e40\u0e25\u0e02\u0e23\u0e2b\u0e31\u0e2a\u0e2d\u0e32\u0e04\u0e32\u0e23",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "building_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "\u0e0a\u0e37\u0e48\u0e2d\u0e2d\u0e32\u0e04\u0e32\u0e23",
+   "reqd": 1
+  },
+  {
+   "fieldname": "building_information",
+   "fieldtype": "Section Break",
+   "label": "\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e2d\u0e32\u0e04\u0e32\u0e23"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-08-20 12:50:39.575464",
+ "modified_by": "Administrator",
+ "module": "SCANGO",
+ "name": "Building",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "row_format": "Dynamic",
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

@@ -1,0 +1,93 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:user",
+ "creation": "2025-08-24 09:20:25.578710",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "information_securityguard",
+  "user",
+  "first_name",
+  "last_name",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "information_securityguard",
+   "fieldtype": "Section Break",
+   "label": "\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e2a\u0e48\u0e27\u0e19\u0e15\u0e31\u0e27\u0e02\u0e2d\u0e07\u0e1c\u0e39\u0e49\u0e23\u0e31\u0e01\u0e29\u0e32\u0e04\u0e27\u0e32\u0e21\u0e1b\u0e25\u0e2d\u0e14\u0e20\u0e31\u0e22"
+  },
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "\u0e1c\u0e39\u0e49\u0e43\u0e0a\u0e49\u0e07\u0e32\u0e19",
+   "link_filters": "[[\"Has Role\", \"role\", \"=\", \"Security Guard\"]]",
+   "options": "User",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fetch_from": "user.first_name",
+   "fieldname": "first_name",
+   "fieldtype": "Data",
+   "label": "\u0e0a\u0e37\u0e48\u0e2d",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "user.last_name",
+   "fieldname": "last_name",
+   "fieldtype": "Data",
+   "label": "\u0e19\u0e32\u0e21\u0e2a\u0e01\u0e38\u0e25",
+   "reqd": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Security Guard",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-08-24 11:49:19.689988",
+ "modified_by": "Administrator",
+ "module": "SCANGO",
+ "name": "Security Guard",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Security Guard",
+   "share": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "first_name"
+}

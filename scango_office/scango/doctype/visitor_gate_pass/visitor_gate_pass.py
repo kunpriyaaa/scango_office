@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class BuildingManagement(Document):
+class VisitorGatePass(Document):
 	pass
