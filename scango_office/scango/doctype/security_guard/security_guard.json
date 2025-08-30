@@ -55,8 +55,13 @@
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2025-08-24 11:49:19.689988",
+ "links": [
+  {
+   "link_doctype": "Visitor Register",
+   "link_fieldname": "security_guard"
+  }
+ ],
+ "modified": "2025-08-30 19:28:36.365462",
  "modified_by": "Administrator",
  "module": "SCANGO",
  "name": "Security Guard",

@@ -29,10 +29,15 @@
   "person_to_meet",
   "items_to_bring",
   "identity_verification_tab",
+  "identity_verification",
   "additional_documents",
   "visitor_photo",
   "terms_accepted",
-  "qr_code"
+  "qr_code",
+  "information_of_the_data_collector",
+  "security_guard",
+  "guard_firstname",
+  "guard_lastname"
  ],
  "fields": [
   {
@@ -205,12 +210,43 @@
    "fieldtype": "Attach Image",
    "label": "QR Code",
    "read_only": 1
+  },
+  {
+   "fieldname": "identity_verification",
+   "fieldtype": "Section Break",
+   "label": "\u0e01\u0e32\u0e23\u0e22\u0e37\u0e19\u0e22\u0e31\u0e19\u0e15\u0e31\u0e27\u0e15\u0e19"
+  },
+  {
+   "fieldname": "information_of_the_data_collector",
+   "fieldtype": "Section Break",
+   "label": "\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e1c\u0e39\u0e49\u0e01\u0e23\u0e2d\u0e01"
+  },
+  {
+   "fieldname": "security_guard",
+   "fieldtype": "Link",
+   "label": "\u0e23\u0e1b\u0e20.\u0e17\u0e35\u0e48\u0e01\u0e23\u0e2d\u0e01",
+   "options": "Security Guard",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "security_guard.first_name",
+   "fieldname": "guard_firstname",
+   "fieldtype": "Data",
+   "label": "\u0e0a\u0e37\u0e48\u0e2d",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "security_guard.last_name",
+   "fieldname": "guard_lastname",
+   "fieldtype": "Data",
+   "label": "\u0e19\u0e32\u0e21\u0e2a\u0e01\u0e38\u0e25",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-08-28 00:33:35.983151",
+ "modified": "2025-08-30 19:45:27.350698",
  "modified_by": "Administrator",
  "module": "SCANGO",
  "name": "Visitor Register",
@@ -225,6 +261,19 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Security Guard",
+   "select": 1,
    "share": 1,
    "write": 1
   }
