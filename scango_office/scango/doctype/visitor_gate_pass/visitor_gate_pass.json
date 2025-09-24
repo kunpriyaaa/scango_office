@@ -1,6 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "VGP-.#####",
  "creation": "2025-08-24 11:53:09.153125",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -12,23 +13,23 @@
   "gate_name",
   "building_name",
   "entry_type",
-  "scan_datetime",
-  "qr_code_data"
+  "scan_datetime"
  ],
  "fields": [
   {
    "fieldname": "visitor_register",
    "fieldtype": "Link",
-   "label": "\u0e1c\u0e39\u0e49\u0e21\u0e32\u0e40\u0e22\u0e37\u0e2d\u0e19",
+   "label": "\u0e1c\u0e39\u0e49\u0e40\u0e22\u0e35\u0e48\u0e22\u0e21\u0e0a\u0e21",
    "options": "Visitor Register",
-   "reqd": 1
+   "reqd": 1,
+   "search_index": 1
   },
   {
    "fetch_from": "visitor_register.first_name",
    "fieldname": "visitor_name",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "\u0e0a\u0e37\u0e48\u0e2d\u0e1c\u0e39\u0e49\u0e21\u0e32\u0e40\u0e22\u0e37\u0e2d\u0e19",
+   "label": "\u0e0a\u0e37\u0e48\u0e2d",
    "read_only": 1,
    "reqd": 1
   },
@@ -37,7 +38,7 @@
    "fieldname": "visitor_last_name",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "\u0e19\u0e32\u0e21\u0e2a\u0e01\u0e38\u0e25\u0e1c\u0e39\u0e49\u0e21\u0e32\u0e40\u0e22\u0e37\u0e2d\u0e19",
+   "label": "\u0e19\u0e32\u0e21\u0e2a\u0e01\u0e38\u0e25",
    "read_only": 1,
    "reqd": 1
   },
@@ -46,7 +47,8 @@
    "fieldtype": "Link",
    "label": "\u0e1b\u0e23\u0e30\u0e15\u0e39",
    "options": "Building Gate",
-   "reqd": 1
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "fetch_from": "building_gate.gate_name",
@@ -66,27 +68,24 @@
    "fieldname": "entry_type",
    "fieldtype": "Select",
    "label": "\u0e01\u0e32\u0e23\u0e40\u0e02\u0e49\u0e32-\u0e2d\u0e2d\u0e01",
-   "options": "\u0e40\u0e02\u0e49\u0e32\n\u0e2d\u0e2d\u0e01"
+   "options": "\u0e40\u0e02\u0e49\u0e32\n\u0e2d\u0e2d\u0e01",
+   "read_only": 1
   },
   {
-   "default": "now",
    "fieldname": "scan_datetime",
    "fieldtype": "Datetime",
-   "label": "\u0e27\u0e31\u0e19\u0e40\u0e27\u0e25\u0e32\u0e17\u0e35\u0e48\u0e41\u0e2a\u0e01\u0e19"
-  },
-  {
-   "fieldname": "qr_code_data",
-   "fieldtype": "Text",
-   "label": "\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25 QR Code"
+   "label": "\u0e27\u0e31\u0e19\u0e40\u0e27\u0e25\u0e32\u0e17\u0e35\u0e48\u0e41\u0e2a\u0e01\u0e19",
+   "read_only": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-08-30 20:45:17.026401",
+ "modified": "2025-09-09 21:44:28.824932",
  "modified_by": "Administrator",
  "module": "SCANGO",
  "name": "Visitor Gate Pass",
+ "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
   {

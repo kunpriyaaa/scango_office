@@ -1,5 +1,4 @@
-// Copyright (c) 2025, kunpriya-natpaphat and contributors
-// For license information, please see license.txt
+// visitor_register.js
 
 frappe.ui.form.on("Visitor Register", {
     refresh: function(frm) {

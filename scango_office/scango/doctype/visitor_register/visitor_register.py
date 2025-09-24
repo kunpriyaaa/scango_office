@@ -1,5 +1,4 @@
-# Copyright (c) 2024, Scango and contributors
-# For license information, please see license.txt
+# visitor_register.py
 
 import frappe
 from frappe.model.document import Document
@@ -102,23 +101,6 @@ class VisitorRegister(Document):
         # Only convert to uppercase, don't restrict format since each country is different
         if self.passport_number:
             self.passport_number = self.passport_number.upper()
-    
-    def before_save(self):
-        """Clean up data before saving"""
-        # Clean up name fields (remove extra spaces)
-        name_fields = ['first_name', 'middle_name', 'last_name']
-        for field in name_fields:
-            if self.get(field):
-                # Remove extra spaces and convert to proper case
-                cleaned_value = ' '.join(self.get(field).split())
-                self.set(field, cleaned_value)
-        
-        # Clean up ID fields
-        if self.thai_national_id:  # Changed field name
-            self.thai_national_id = self.thai_national_id.replace('-', '').replace(' ', '')
-        
-        if self.passport_number:
-            self.passport_number = self.passport_number.upper().replace(' ', '')
     
     def validate_birth_date(self):
         """Validate birth date is not in the future"""
@@ -236,7 +218,7 @@ class VisitorRegister(Document):
         start_date = getdate(self.visit_date)
         end_date = getdate(self.visit_end_date)
         
-        # Compact QR Code data to reduce size
+        # Compact QR Code data to reduce size แก้ไขใช้แค่id 
         qr_data = {
             "id": self.name,
             "name": f"{self.first_name or ''} {self.last_name or ''}".strip(),
@@ -247,20 +229,30 @@ class VisitorRegister(Document):
             "days": self.total_days,
             "gen": str(now_datetime())[:19],  # Remove microseconds
             "status": "active"
-        }
+        } 
         
         # Convert to compact JSON string
         qr_string = json.dumps(qr_data, ensure_ascii=False, separators=(',', ':'))
         
+        # Create URL for QR scanner page
         try:
-            # Generate QR code image
+            site_url = frappe.utils.get_url()
+            import urllib.parse
+            qr_url = f"{site_url}/qr_scanner?data={urllib.parse.quote(qr_string)}"
+        except Exception as e:
+            # Fallback to JSON string if URL creation fails
+            frappe.log_error(f"URL creation failed: {str(e)}")
+            qr_url = qr_string
+        
+        try:
+            # Generate QR code image with URL
             qr = qrcode.QRCode(
                 version=1,
                 error_correction=qrcode.constants.ERROR_CORRECT_L,
                 box_size=10,
                 border=4,
             )
-            qr.add_data(qr_string)
+            qr.add_data(qr_url)
             qr.make(fit=True)
             
             # Create QR code image
@@ -284,18 +276,26 @@ class VisitorRegister(Document):
             # Set the QR code field to reference the file
             self.qr_code = file_doc.file_url
             
-        except ImportError:
-            # Fallback to text if qrcode library not installed
-            self.qr_code = qr_string
             frappe.msgprint(
-                "QR Code library ไม่พร้อมใช้งาน กรุณาติดตั้ง: pip install qrcode[pil]",
-                title="ข้อมูล",
+                f"QR Code สร้างเรียบร้อย ใช้ได้ตั้งแต่ {start_date} ถึง {end_date} ({self.total_days} วัน)",
+                title="QR Code พร้อมใช้งาน",
+                indicator="green"
+            )
+            
+        except ImportError:
+            # Fallback to URL string if qrcode library not installed
+            self.qr_code = qr_url
+            frappe.msgprint(
+                "QR Code URL สร้างเรียบร้อย กรุณาติดตั้ง: pip install qrcode[pil] เพื่อสร้างรูปภาพ",
+                title="QR Code URL พร้อมใช้งาน",
                 indicator="orange"
             )
-            return
-        
-        frappe.msgprint(
-            f"QR Code สร้างเรียบร้อย ใช้ได้ตั้งแต่ {start_date} ถึง {end_date} ({self.total_days} วัน)",
-            title="QR Code พร้อมใช้งาน",
-            indicator="green"
-        )
+        except Exception as e:
+            frappe.log_error(f"Error generating QR Code: {str(e)}")
+            # Fallback to JSON string if all else fails
+            self.qr_code = qr_string
+            frappe.msgprint(
+                "สร้าง QR Code แบบ JSON เรียบร้อยแล้ว",
+                title="QR Code พร้อมใช้งาน",
+                indicator="blue"
+            )

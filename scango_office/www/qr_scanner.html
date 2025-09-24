@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            font-family: 'Kanit', sans-serif;
+            overflow: hidden;
+        }
+
+        /* Scanner Mode - เต็มหน้าจอ */
+        .scanner-mode {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qr-scanner-video {
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            background: #000;
+        }
+
+        .scanner-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .scanner-status {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .scanner-active {
+            color: #28a745;
+        }
+
+        .scanner-inactive {
+            color: #6c757d;
+        }
+
+        .scanner-error {
+            color: #dc3545;
+        }
+
+        .scan-frame {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 300px;
+            border: 3px solid #28a745;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(40, 167, 69, 0.5);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 20px rgba(40, 167, 69, 0.5);
+            }
+
+            50% {
+                box-shadow: 0 0 30px rgba(40, 167, 69, 0.8);
+            }
+
+            100% {
+                box-shadow: 0 0 20px rgba(40, 167, 69, 0.5);
+            }
+        }
+
+        .scan-success {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #28a745;
+            font-size: 2rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px 40px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        /* Data Display Mode */
+        .data-mode {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: none;
+        }
+
+        .visitor-info {
+            background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .gate-btn {
+            margin: 5px;
+            border-radius: 25px;
+            padding: 10px 20px;
+            font-weight: 500;
+        }
+
+        .status-badge {
+            font-size: 1.1rem;
+            padding: 8px 20px;
+            border-radius: 25px;
+        }
+
+        .history-item {
+            border-left: 4px solid #007bff;
+            padding-left: 15px;
+            margin-bottom: 10px;
+        }
+
+        .entry-badge {
+            font-size: 0.8rem;
+            padding: 4px 8px;
+        }
+
+        /* Hidden elements */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        {% if show_scanner %}
+        <!-- Scanner Mode - เต็มหน้าจอ ไม่มี UI -->
+        <div class="scanner-mode">
+            <!-- Status Overlay -->
+            <div class="scanner-overlay">
+                <div v-if="scannerState === 'starting'" class="scanner-status scanner-inactive">
+                    <i class="fas fa-spinner fa-spin me-2"></i>
+                    กำลังเริ่มระบบสแกน...
+                </div>
+
+                <div v-if="scannerState === 'active'" class="scanner-status scanner-active">
+                    <i class="fas fa-qrcode me-2"></i>
+                    พร้อมสแกน QR Code
+                </div>
+
+                <div v-if="scannerState === 'error'" class="scanner-status scanner-error">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <span v-text="errorMessage"></span>
+                </div>
+
+                <!-- Scanning Frame -->
+                <div v-if="scannerState === 'active'" class="scan-frame"></div>
+
+                <!-- Success Message -->
+                <div v-if="scanSuccess" class="scan-success">
+                    <i class="fas fa-check-circle mb-2"></i><br>
+                    สแกนสำเร็จ<br>
+                    <small>กำลังโหลดข้อมูล...</small>
+                </div>
+            </div>
+
+            <!-- Video Element -->
+            <video ref="video" class="qr-scanner-video" autoplay playsinline muted>
+            </video>
+
+            <!-- Hidden Canvas -->
+            <canvas ref="canvas" class="hidden"></canvas>
+        </div>
+
+        {% elif error_message %}
+        <!-- Error Display -->
+        <div class="data-mode">
+            <div class="container mt-4">
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body text-center p-4">
+                                <div class="alert alert-danger" role="alert">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    {{ error_message }}
+                                </div>
+                                <a href="/qr_scanner" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-qrcode me-2"></i>สแกนใหม่
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% elif is_valid %}
+        <!-- Data Display Mode -->
+        <div class="data-mode">
+            <div class="container mt-4">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <!-- Header -->
+                        <div class="text-center mb-4">
+                            <h2 class="text-white">
+                                <i class="fas fa-user-check me-2"></i>
+                                ข้อมูลผู้เยี่ยมชม
+                            </h2>
+                        </div>
+
+                        <!-- Main Card -->
+                        <div class="card">
+                            <div class="card-body p-4">
+
+                                <!-- Visitor Information -->
+                                <div class="visitor-info">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <h4 class="mb-2">
+                                                <i class="fas fa-user-check text-success me-2"></i>
+                                                {{ visitor_data.name }}
+                                            </h4>
+                                            <p class="mb-1">
+                                                <strong>รหัส:</strong> {{ visitor_data.id }}
+                                            </p>
+                                            {% if visitor_data.phone %}
+                                            <p class="mb-1">
+                                                <strong>เบอร์โทร:</strong> {{ visitor_data.phone }}
+                                            </p>
+                                            {% endif %}
+                                            {% if visitor_data.purpose %}
+                                            <p class="mb-1">
+                                                <strong>วัตถุประสงค์:</strong> {{ visitor_data.purpose }}
+                                            </p>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-md-4 text-end">
+                                            {% if days_remaining > 0 %}
+                                            <span class="status-badge bg-success text-white">
+                                                <i class="fas fa-check-circle me-1"></i>
+                                                ใช้ได้
+                                            </span>
+                                            <small class="d-block mt-2 text-muted">
+                                                เหลืออีก {{ days_remaining }} วัน
+                                            </small>
+                                            {% else %}
+                                            <span class="status-badge bg-warning text-dark">
+                                                <i class="fas fa-clock me-1"></i>
+                                                วันสุดท้าย
+                                            </span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+
+                                    <div class="row mt-3">
+                                        <div class="col-md-6">
+                                            <small class="text-muted">
+                                                <strong>วันเริ่ม:</strong> {{ visitor_data.start }}
+                                            </small>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <small class="text-muted">
+                                                <strong>วันสิ้นสุด:</strong> {{ visitor_data.end }}
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Gate Selection -->
+                                <div class="mt-4">
+                                    <h5 class="mb-3">
+                                        <i class="fas fa-door-open me-2"></i>
+                                        เลือกประตูที่ต้องการเข้า/ออก
+                                    </h5>
+                                    <div class="row">
+                                        {% for gate in available_gates %}
+                                        <div class="col-md-6 mb-2">
+                                            <button class="btn btn-outline-primary gate-btn w-100"
+                                                onclick="recordGateAccess('{{ gate.name }}', '{{ gate.gate_name }}', '{{ gate.building_name }}')">
+                                                <i class="fas fa-building me-2"></i>
+                                                {{ gate.gate_name }}<br>
+                                                <small>{{ gate.building_name }}</small>
+                                            </button>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+
+                                {% if visit_history %}
+                                <!-- Visit History -->
+                                <div class="mt-4">
+                                    <h5 class="mb-3">
+                                        <i class="fas fa-history me-2"></i>
+                                        ประวัติการเข้า-ออกล่าสุด
+                                    </h5>
+                                    <div style="max-height: 200px; overflow-y: auto;">
+                                        {% for history in visit_history %}
+                                        <div class="history-item">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <strong>{{ history.gate_name }}</strong>
+                                                    <small class="text-muted d-block">{{ history.building_name
+                                                        }}</small>
+                                                </div>
+                                                <div class="text-end">
+                                                    <span
+                                                        class="badge entry-badge {% if history.entry_type == 'เข้า' %}bg-success{% else %}bg-warning text-dark{% endif %}">
+                                                        {{ history.entry_type }}
+                                                    </span>
+                                                    <small class="text-muted d-block">{{ history.scan_datetime
+                                                        }}</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                {% endif %}
+
+                                <!-- Auto Return Timer -->
+                                <div class="text-center mt-4">
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        กรุณาเลือกประตู หรือรอ <span id="countdown">30</span> วินาที
+                                        ระบบจะกลับสู่โหมดสแกนอัตโนมัติ
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+
+            data() {
+                return {
+                    scannerState: 'starting', // starting, active, error
+                    errorMessage: '',
+                    stream: null,
+                    scanSuccess: false,
+                    consecutiveFailures: 0
+                }
+            },
+            methods: {
+                async initializeScanner() {
+                    this.scannerState = 'starting';
+                    this.errorMessage = '';
+                    this.scanSuccess = false;
+
+                    try {
+                        // ขอสิทธิ์การใช้กล้อง
+                        this.stream = await navigator.mediaDevices.getUserMedia({
+                            video: {
+                                facingMode: 'environment',
+                                width: { ideal: 1920 },
+                                height: { ideal: 1080 }
+                            }
+                        });
+
+                        // เชื่อมต่อกับ video element
+                        if (this.$refs.video) {
+                            this.$refs.video.srcObject = this.stream;
+                            this.scannerState = 'active';
+
+                            // เริ่ม scanning ทันที
+                            this.startContinuousScanning();
+                        }
+
+                    } catch (error) {
+                        console.error('Camera error:', error);
+                        this.scannerState = 'error';
+
+                        if (error.name === 'NotAllowedError') {
+                            this.errorMessage = 'กรุณาอนุญาตการใช้กล้อง';
+                        } else if (error.name === 'NotFoundError') {
+                            this.errorMessage = 'ไม่พบกล้อง';
+                        } else {
+                            this.errorMessage = 'ไม่สามารถเปิดกล้องได้';
+                        }
+                    }
+                },
+
+                startContinuousScanning() {
+                    const video = this.$refs.video;
+                    const canvas = this.$refs.canvas;
+
+                    if (!video || !canvas) return;
+
+                    const context = canvas.getContext('2d');
+                    let isProcessing = false;
+
+                    const scanLoop = () => {
+                        if (this.scannerState !== 'active' || isProcessing) {
+                            setTimeout(scanLoop, 100);
+                            return;
+                        }
+
+                        if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                            canvas.height = video.videoHeight;
+                            canvas.width = video.videoWidth;
+                            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                            const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                            const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+                            if (code) {
+                                isProcessing = true;
+                                this.processQRCode(code.data);
+                                return; // หยุด scanning loop
+                            }
+                        }
+
+                        // ใช้ requestAnimationFrame สำหรับ smooth scanning
+                        requestAnimationFrame(scanLoop);
+                    };
+
+                    scanLoop();
+                },
+
+                async processQRCode(qrContent) {
+                    // แสดง success animation
+                    this.scanSuccess = true;
+
+                    try {
+                        // หยุดกล้อง
+                        if (this.stream) {
+                            this.stream.getTracks().forEach(track => track.stop());
+                        }
+
+                        // รอ 1.5 วินาที แล้ว redirect
+                        setTimeout(() => {
+                            try {
+                                // ลองแปลงเป็น JSON
+                                JSON.parse(qrContent);
+                                window.location.href = `/qr_scanner?data=${encodeURIComponent(qrContent)}`;
+                            } catch (e) {
+                                // ถ้าไม่ใช่ JSON
+                                if (qrContent.includes('/qr_scanner')) {
+                                    window.location.href = qrContent;
+                                } else {
+                                    window.location.href = `/qr_scanner?id=${encodeURIComponent(qrContent)}`;
+                                }
+                            }
+                        }, 1500);
+
+                    } catch (error) {
+                        console.error('QR Processing error:', error);
+                        // กลับไปสแกนใหม่
+                        this.scanSuccess = false;
+                        setTimeout(() => {
+                            this.initializeScanner();
+                        }, 2000);
+                    }
+                }
+            },
+
+            mounted() {
+                // เริ่มสแกนอัตโนมัติทันทีที่โหลดหน้า
+                this.initializeScanner();
+            },
+
+            beforeUnmount() {
+                if (this.stream) {
+                    this.stream.getTracks().forEach(track => track.stop());
+                }
+            }
+        }).mount('#app');
+
+        // Auto-return countdown timer for data display mode
+        {% if is_valid %}
+        let countdown = 30;
+        const countdownElement = document.getElementById('countdown');
+
+        const countdownTimer = setInterval(() => {
+            countdown--;
+            if (countdownElement) {
+                countdownElement.textContent = countdown;
+            }
+
+            if (countdown <= 0) {
+                clearInterval(countdownTimer);
+                window.location.href = '/qr_scanner';
+            }
+        }, 1000);
+        {% endif %}
+
+        // Gate access function
+        // แทนที่ฟังก์ชัน recordGateAccess ใน qr_scanner.html
+
+        async function recordGateAccess(gateId, gateName, buildingName) {
+            try {
+                const visitor_id = '{{ visitor_data.id if visitor_data else "" }}';
+                const url = `/api/method/scango_office.www.qr_scanner.record_gate_access_get?visitor_id=${visitor_id}&gate_id=${gateId}`;
+
+                const response = await fetch(url, {
+                    method: 'GET',
+                    credentials: 'same-origin'
+                });
+
+                const data = await response.json();
+
+                if (data.message && data.message.success) {
+                    alert(data.message.message);
+                    window.location.href = '/qr_scanner';
+                } else {
+                    alert(`ข้อผิดพลาด: ${data.message?.message || 'ไม่ทราบสาเหตุ'}`);
+                    window.location.href = '/qr_scanner';
+                }
+
+            } catch (error) {
+                alert(`เกิดข้อผิดพลาด: ${error.message}`);
+                window.location.href = '/qr_scanner';
+            }
+        }
+    </script>
+</body>
+
+</html>

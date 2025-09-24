@@ -1,0 +1,76 @@
+{% if machine_name and machine %}
+<!--Open QR code Scanner -->
+<!-- {{machine.as_dict()}} -->
+
+<div id="gate_app">
+    <div id="camera_page">
+        <h2>สแกน QR สำหรับประตู: MAC01</h2>
+        <div id="reader"></div>
+        <div class="info">
+            <p><strong>อาคาร:</strong> {!! machine.building_gate !!}</p>
+            <p><strong>ประเภทการเข้า:</strong> {!! machine.use_for !!}</p>
+            <p><strong>สถานะ:</strong> รอการสแกน...</p>
+            <p id="result"></p>
+
+            <qrcode-stream @detect="detect"></qrcode-stream>
+        </div>
+    </div>
+
+    <div id="check_in_pge">
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script src="https://unpkg.com/vue-qrcode-reader/dist/vue-qrcode-reader.umd.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+
+<script>
+    const { createApp } = Vue;
+
+    const machine_data = {
+        name: "{{machine.name}}",
+        use_for: "{{machine.use_for}}",
+        building_gate: "{{machine.building_gate}}",
+    }
+
+    const app = createApp({
+        delimiters: ["{!!", "!!}"],
+        data() {
+            return {
+                machine: machine_data,
+                stream: null
+            }
+        },
+        methods: {
+            async detect(detectedCodes) {
+                console.log('detectedCodes', detectedCodes)
+                const audio = new Audio('/files/welcome.mp3');
+                audio.play();
+
+                if (this.machine.use_for == 'Check In'){
+
+                }else {
+
+                    
+                }
+            }
+        },
+
+        mounted() {
+        },
+        beforeUnmount() {
+            if (this.stream) {
+                this.stream.getTracks().forEach(track => track.stop());
+            }
+        }
+    })
+    app.component('qrcode-stream', VueQrcodeReader.QrcodeStream)
+    app.mount('#gate_app');
+
+</script>
+{%else%}
+Error {{error}}
+{% endif %}
