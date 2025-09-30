@@ -48,7 +48,7 @@ class VisitorRegister(Document):
             return
             
         if self.id_type == "เลขบัตรประชาชน":
-            if self.thai_national_id:  # Changed from national_id to thai_national_id
+            if self.thai_national_id:
                 if self.flags.ignore_validate:
                     return
                 self.validate_national_id()
@@ -60,7 +60,7 @@ class VisitorRegister(Document):
     
     def validate_national_id(self):
         """Validate Thai National ID (13 digits)"""
-        national_id = self.thai_national_id.replace('-', '').replace(' ', '')  # Changed field name
+        national_id = self.thai_national_id.replace('-', '').replace(' ', '')
         
         # Only validate if user seems done entering (has some content)
         # Don't validate if clearly incomplete (less than 10 digits)
@@ -97,10 +97,11 @@ class VisitorRegister(Document):
         return int(national_id[12]) == check_digit
     
     def validate_passport_number(self):
-        """Validate Passport Number - just convert to uppercase, no strict format validation"""
+        """No validation required for passport number"""
         # Only convert to uppercase, don't restrict format since each country is different
         if self.passport_number:
             self.passport_number = self.passport_number.upper()
+        return
     
     def validate_birth_date(self):
         """Validate birth date is not in the future"""
@@ -109,7 +110,7 @@ class VisitorRegister(Document):
             from frappe.utils import getdate
             
             today = date.today()
-            birth_date = getdate(self.birth_date)  # Convert string to date
+            birth_date = getdate(self.birth_date)
             
             if birth_date > today:
                 frappe.throw(
@@ -127,7 +128,7 @@ class VisitorRegister(Document):
         from frappe.utils import getdate
         
         today = date.today()
-        birth_date = getdate(self.birth_date)  # Convert string to date
+        birth_date = getdate(self.birth_date)
         
         if birth_date > today:
             self.age = None
@@ -165,7 +166,7 @@ class VisitorRegister(Document):
             end_date = getdate(self.visit_end_date)
             
             if end_date >= start_date:
-                duration = date_diff(end_date, start_date) + 1  # +1 to include both days
+                duration = date_diff(end_date, start_date) + 1
                 self.total_days = duration
             else:
                 self.total_days = None
@@ -174,7 +175,6 @@ class VisitorRegister(Document):
 
     def validate_terms_acceptance(self):
         """Validate that terms are accepted when visitor photo is uploaded"""
-        # Only validate if both photo and checkbox field exist
         if hasattr(self, 'visitor_photo') and hasattr(self, 'terms_accepted'):
             if self.visitor_photo and not self.terms_accepted:
                 frappe.throw(
@@ -188,7 +188,6 @@ class VisitorRegister(Document):
         name_fields = ['first_name', 'middle_name', 'last_name']
         for field in name_fields:
             if self.get(field):
-                # Remove extra spaces and convert to proper case
                 cleaned_value = ' '.join(self.get(field).split())
                 self.set(field, cleaned_value)
         
@@ -204,55 +203,23 @@ class VisitorRegister(Document):
             self.generate_qr_code()
 
     def generate_qr_code(self):
-        """Generate QR code with visitor information and validity period"""
-        import json
+        """Generate QR code with visitor ID only"""
         import qrcode
         import io
         import base64
-        from frappe.utils import getdate, now_datetime
         
-        if not self.visit_date or not self.visit_end_date:
+        if not self.name:
             return
         
-        # Calculate QR code validity period
-        start_date = getdate(self.visit_date)
-        end_date = getdate(self.visit_end_date)
-        
-        # Compact QR Code data to reduce size แก้ไขใช้แค่id 
-        qr_data = {
-            "id": self.name,
-            "name": f"{self.first_name or ''} {self.last_name or ''}".strip(),
-            "phone": self.phone_number,
-            "purpose": self.purpose,
-            "start": str(start_date),
-            "end": str(end_date),
-            "days": self.total_days,
-            "gen": str(now_datetime())[:19],  # Remove microseconds
-            "status": "active"
-        } 
-        
-        # Convert to compact JSON string
-        qr_string = json.dumps(qr_data, ensure_ascii=False, separators=(',', ':'))
-        
-        # Create URL for QR scanner page
         try:
-            site_url = frappe.utils.get_url()
-            import urllib.parse
-            qr_url = f"{site_url}/qr_scanner?data={urllib.parse.quote(qr_string)}"
-        except Exception as e:
-            # Fallback to JSON string if URL creation fails
-            frappe.log_error(f"URL creation failed: {str(e)}")
-            qr_url = qr_string
-        
-        try:
-            # Generate QR code image with URL
+            # Generate QR code with ID only (เก็บเฉพาะ ID)
             qr = qrcode.QRCode(
                 version=1,
                 error_correction=qrcode.constants.ERROR_CORRECT_L,
                 box_size=10,
                 border=4,
             )
-            qr.add_data(qr_url)
+            qr.add_data(self.name)  # เก็บเฉพาะ ID เช่น 25-09-30-REG-001
             qr.make(fit=True)
             
             # Create QR code image
@@ -277,25 +244,21 @@ class VisitorRegister(Document):
             self.qr_code = file_doc.file_url
             
             frappe.msgprint(
-                f"QR Code สร้างเรียบร้อย ใช้ได้ตั้งแต่ {start_date} ถึง {end_date} ({self.total_days} วัน)",
+                f"QR Code สร้างเรียบร้อย (ID: {self.name})",
                 title="QR Code พร้อมใช้งาน",
                 indicator="green"
             )
             
         except ImportError:
-            # Fallback to URL string if qrcode library not installed
-            self.qr_code = qr_url
             frappe.msgprint(
-                "QR Code URL สร้างเรียบร้อย กรุณาติดตั้ง: pip install qrcode[pil] เพื่อสร้างรูปภาพ",
-                title="QR Code URL พร้อมใช้งาน",
+                "กรุณาติดตั้ง: pip install qrcode[pil] เพื่อสร้าง QR Code",
+                title="ต้องติดตั้ง Library",
                 indicator="orange"
             )
         except Exception as e:
             frappe.log_error(f"Error generating QR Code: {str(e)}")
-            # Fallback to JSON string if all else fails
-            self.qr_code = qr_string
             frappe.msgprint(
-                "สร้าง QR Code แบบ JSON เรียบร้อยแล้ว",
-                title="QR Code พร้อมใช้งาน",
-                indicator="blue"
+                "เกิดข้อผิดพลาดในการสร้าง QR Code",
+                title="ข้อผิดพลาด",
+                indicator="red"
             )

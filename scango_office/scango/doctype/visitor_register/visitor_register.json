@@ -1,6 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "YY.-.MM.-.DD.-.REG.-.###",
  "creation": "2025-07-11 20:21:48.911021",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -19,7 +20,6 @@
   "phone_number",
   "gender",
   "nationality",
-  "visit_info_tab",
   "section_break_dbar",
   "visit_date",
   "visit_end_date",
@@ -28,7 +28,6 @@
   "other_purpose_details",
   "person_to_meet",
   "items_to_bring",
-  "identity_verification_tab",
   "identity_verification",
   "additional_documents",
   "visitor_photo",
@@ -57,8 +56,7 @@
   {
    "fieldname": "phone_number",
    "fieldtype": "Data",
-   "label": "\u0e40\u0e1a\u0e2d\u0e23\u0e4c\u0e42\u0e17\u0e23",
-   "reqd": 1
+   "label": "\u0e40\u0e1a\u0e2d\u0e23\u0e4c\u0e42\u0e17\u0e23"
   },
   {
    "depends_on": "eval:doc.id_type == \"\u0e40\u0e25\u0e02\u0e2b\u0e19\u0e31\u0e07\u0e2a\u0e37\u0e2d\u0e40\u0e14\u0e34\u0e19\u0e17\u0e32\u0e07\"",
@@ -125,16 +123,6 @@
    "label": "\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e2a\u0e48\u0e27\u0e19\u0e15\u0e31\u0e27"
   },
   {
-   "fieldname": "visit_info_tab",
-   "fieldtype": "Tab Break",
-   "label": "\u0e02\u0e49\u0e2d\u0e21\u0e39\u0e25\u0e01\u0e32\u0e23\u0e40\u0e22\u0e35\u0e48\u0e22\u0e21\u0e0a\u0e21"
-  },
-  {
-   "fieldname": "identity_verification_tab",
-   "fieldtype": "Tab Break",
-   "label": "\u0e22\u0e37\u0e19\u0e22\u0e31\u0e19\u0e15\u0e31\u0e27\u0e15\u0e19"
-  },
-  {
    "fieldname": "visit_date",
    "fieldtype": "Date",
    "label": "\u0e27\u0e31\u0e19\u0e17\u0e35\u0e48\u0e08\u0e30\u0e40\u0e02\u0e49\u0e32\u0e08\u0e32\u0e01\u0e2a\u0e16\u0e32\u0e19\u0e17\u0e35\u0e48",
@@ -166,10 +154,9 @@
    "reqd": 1
   },
   {
-   "description": "\u0e2d\u0e38\u0e1b\u0e01\u0e23\u0e13\u0e4c, \u0e01\u0e23\u0e30\u0e40\u0e1b\u0e4b\u0e32, \u0e2d\u0e34\u0e40\u0e25\u0e47\u0e01\u0e17\u0e23\u0e2d\u0e19\u0e34\u0e01\u0e2a\u0e4c \u0e2f\u0e25\u0e2f (\u0e44\u0e21\u0e48\u0e1a\u0e31\u0e07\u0e04\u0e31\u0e1a)",
    "fieldname": "items_to_bring",
    "fieldtype": "Small Text",
-   "label": "\u0e2d\u0e38\u0e1b\u0e01\u0e23\u0e13\u0e4c\u0e2b\u0e23\u0e37\u0e2d\u0e2a\u0e34\u0e48\u0e07\u0e02\u0e2d\u0e07\u0e17\u0e35\u0e48\u0e19\u0e33\u0e40\u0e02\u0e49\u0e32"
+   "label": "\u0e23\u0e32\u0e22\u0e25\u0e30\u0e40\u0e2d\u0e35\u0e22\u0e14\u0e40\u0e1e\u0e34\u0e48\u0e21\u0e40\u0e15\u0e34\u0e21"
   },
   {
    "fieldname": "birth_date",
@@ -190,14 +177,13 @@
   },
   {
    "fieldname": "additional_documents",
-   "fieldtype": "Attach",
+   "fieldtype": "Attach Image",
    "label": "\u0e41\u0e19\u0e1a\u0e40\u0e2d\u0e01\u0e2a\u0e32\u0e23\u0e40\u0e1e\u0e34\u0e48\u0e21\u0e40\u0e15\u0e34\u0e21"
   },
   {
    "fieldname": "visitor_photo",
-   "fieldtype": "Attach",
-   "label": "\u0e23\u0e39\u0e1b\u0e16\u0e48\u0e32\u0e22\u0e2b\u0e19\u0e49\u0e32\u0e1c\u0e39\u0e49\u0e40\u0e22\u0e35\u0e48\u0e22\u0e21\u0e0a\u0e21",
-   "reqd": 1
+   "fieldtype": "Attach Image",
+   "label": "\u0e23\u0e39\u0e1b\u0e16\u0e48\u0e32\u0e22\u0e2b\u0e19\u0e49\u0e32\u0e1c\u0e39\u0e49\u0e40\u0e22\u0e35\u0e48\u0e22\u0e21\u0e0a\u0e21"
   },
   {
    "default": "0",
@@ -251,10 +237,11 @@
    "link_fieldname": "visitor_register"
   }
  ],
- "modified": "2025-08-30 20:59:23.626657",
+ "modified": "2025-09-30 18:49:26.164051",
  "modified_by": "Administrator",
  "module": "SCANGO",
  "name": "Visitor Register",
+ "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
   {

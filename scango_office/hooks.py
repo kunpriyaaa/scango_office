@@ -5,7 +5,6 @@ app_description = "check in - check out of the security guard"
 app_email = "kunpriyachaiwong@gmail.com"
 app_license = "mit"
 
-# Apps
 # ------------------
 
 # required_apps = []

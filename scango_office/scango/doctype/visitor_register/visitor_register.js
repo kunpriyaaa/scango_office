@@ -51,8 +51,11 @@ frappe.ui.form.on("Visitor Register", {
     },
 
     passport_number: function(frm) {
-        // Only format to uppercase
-        format_passport_number(frm);
+        // Only format to uppercase - NO validation popup
+        if (frm.doc.passport_number) {
+            let value = frm.doc.passport_number.toUpperCase();
+            frm.set_value('passport_number', value);
+        }
     }
 });
 
@@ -245,11 +248,9 @@ function setup_id_field_formatting(frm) {
                 $(this).val(value);
             }
         });
-        
-        // No more blur validation - removed completely
     }
 
-    // Setup passport number formatting  
+    // Setup passport number formatting - UPPERCASE ONLY
     if (frm.fields_dict.passport_number) {
         frm.fields_dict.passport_number.$input.on('input', function() {
             let value = $(this).val().toUpperCase();
@@ -258,57 +259,3 @@ function setup_id_field_formatting(frm) {
     }
 }
 
-function validate_thai_national_id_input(frm, value) {
-    if (value) {
-        let numbers_only = value.replace(/\D/g, '');
-        let has_invalid_chars = value !== numbers_only;
-        let wrong_length = numbers_only.length !== 13;
-        
-        if (has_invalid_chars || wrong_length) {
-            let message = '';
-            if (has_invalid_chars) {
-                message += 'พบอักขระที่ไม่ใช่ตัวเลข ';
-            }
-            if (wrong_length) {
-                message += `ต้องเป็น 13 หลัก (ปัจจุบัน ${numbers_only.length} หลัก)`;
-            }
-            
-            frappe.msgprint({
-                title: 'รูปแบบเลขบัตรประชาชนไม่ถูกต้อง',
-                message: message + '<br><b>ตัวอย่างที่ถูกต้อง:</b> 1234567890123',
-                indicator: 'orange'
-            });
-        }
-    }
-}
-
-function validate_passport_number_input(frm, value) {
-    if (value) {
-        let valid_chars = value.replace(/[^A-Z0-9]/g, '');
-        let has_invalid_chars = value !== valid_chars;
-        
-        if (has_invalid_chars) {
-            frappe.msgprint({
-                title: 'รูปแบบเลขหนังสือเดินทางไม่ถูกต้อง',
-                message: 'อนุญาตเฉพาะตัวอักษรอังกฤษ A-Z และตัวเลข 0-9 เท่านั้น<br><b>ตัวอย่างที่ถูกต้อง:</b> AB1234567',
-                indicator: 'orange'
-            });
-        }
-    }
-}
-
-function format_thai_national_id(frm) {
-    // This function now just validates on form change, doesn't auto-format
-    if (frm.doc.thai_national_id) {
-        validate_thai_national_id_input(frm, frm.doc.thai_national_id);
-    }
-}
-
-function format_passport_number(frm) {
-    // Auto-uppercase only, keep validation separate
-    if (frm.doc.passport_number) {
-        let value = frm.doc.passport_number.toUpperCase();
-        frm.set_value('passport_number', value);
-        validate_passport_number_input(frm, value);
-    }
-}

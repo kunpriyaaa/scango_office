@@ -6,13 +6,14 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "section_break_omyp",
   "visitor_register",
   "visitor_name",
   "visitor_last_name",
+  "gate_machine",
   "building_gate",
-  "gate_name",
   "building_name",
-  "entry_type",
+  "action_type",
   "scan_datetime"
  ],
  "fields": [
@@ -21,6 +22,7 @@
    "fieldtype": "Link",
    "label": "\u0e1c\u0e39\u0e49\u0e40\u0e22\u0e35\u0e48\u0e22\u0e21\u0e0a\u0e21",
    "options": "Visitor Register",
+   "read_only": 1,
    "reqd": 1,
    "search_index": 1
   },
@@ -43,32 +45,31 @@
    "reqd": 1
   },
   {
-   "fieldname": "building_gate",
-   "fieldtype": "Link",
-   "label": "\u0e1b\u0e23\u0e30\u0e15\u0e39",
-   "options": "Building Gate",
+   "fieldname": "gate_machine",
+   "fieldtype": "Data",
+   "label": "\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e41\u0e2a\u0e01\u0e19",
    "read_only": 1,
    "search_index": 1
   },
   {
-   "fetch_from": "building_gate.gate_name",
-   "fieldname": "gate_name",
+   "fieldname": "building_gate",
    "fieldtype": "Data",
-   "label": "\u0e0a\u0e37\u0e48\u0e2d\u0e1b\u0e23\u0e30\u0e15\u0e39",
-   "read_only": 1
+   "label": "\u0e1b\u0e23\u0e30\u0e15\u0e39",
+   "read_only": 1,
+   "search_index": 1
   },
   {
    "fetch_from": "building_gate.building_name",
    "fieldname": "building_name",
    "fieldtype": "Data",
-   "label": "\u0e0a\u0e37\u0e48\u0e2d\u0e2d\u0e32\u0e04\u0e32\u0e23",
+   "label": "\u0e2d\u0e32\u0e04\u0e32\u0e23",
    "read_only": 1
   },
   {
-   "fieldname": "entry_type",
+   "fieldname": "action_type",
    "fieldtype": "Select",
-   "label": "\u0e01\u0e32\u0e23\u0e40\u0e02\u0e49\u0e32-\u0e2d\u0e2d\u0e01",
-   "options": "\u0e40\u0e02\u0e49\u0e32\n\u0e2d\u0e2d\u0e01",
+   "label": "\u0e1b\u0e23\u0e30\u0e40\u0e20\u0e17 ",
+   "options": "In\nOut\nCheckStatus\nCheckout",
    "read_only": 1
   },
   {
@@ -76,12 +77,17 @@
    "fieldtype": "Datetime",
    "label": "\u0e27\u0e31\u0e19\u0e40\u0e27\u0e25\u0e32\u0e17\u0e35\u0e48\u0e41\u0e2a\u0e01\u0e19",
    "read_only": 1
+  },
+  {
+   "fieldname": "section_break_omyp",
+   "fieldtype": "Section Break",
+   "in_standard_filter": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-09-09 21:44:28.824932",
+ "modified": "2025-09-26 21:35:09.889052",
  "modified_by": "Administrator",
  "module": "SCANGO",
  "name": "Visitor Gate Pass",
