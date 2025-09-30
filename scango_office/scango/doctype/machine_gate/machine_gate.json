@@ -41,7 +41,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-09-14 13:34:56.487939",
+ "modified": "2025-10-01 01:46:48.103859",
  "modified_by": "Administrator",
  "module": "SCANGO",
  "name": "Machine Gate",
@@ -57,6 +57,18 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Security Guard",
    "share": 1,
    "write": 1
   }

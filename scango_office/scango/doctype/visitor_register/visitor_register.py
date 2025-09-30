@@ -145,9 +145,22 @@ class VisitorRegister(Document):
 
     def validate_visit_dates(self):
         """Validate visit dates"""
+        from frappe.utils import getdate, today
+        from datetime import date
+        
+        today_date = getdate(today())
+        
+        # ตรวจสอบวันที่เข้า - ต้องเป็นวันนี้เท่านั้น
+        if self.visit_date:
+            start_date = getdate(self.visit_date)
+            if start_date != today_date:
+                frappe.throw(
+                    "วันที่เข้าต้องเป็นวันนี้เท่านั้น",
+                    title="วันที่ไม่ถูกต้อง"
+                )
+        
+        # ตรวจสอบวันที่ออก - สามารถเป็นวันนี้หรืออนาคตได้
         if self.visit_date and self.visit_end_date:
-            from frappe.utils import getdate
-            
             start_date = getdate(self.visit_date)
             end_date = getdate(self.visit_end_date)
             

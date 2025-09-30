@@ -5,8 +5,17 @@ frappe.ui.form.on("Visitor Register", {
         calculate_age(frm);
         set_gender_automatically(frm);
         set_birth_date_max(frm);
+        set_visit_date_to_today(frm);
+        set_security_guard_auto(frm);
         setup_id_field_formatting(frm);
         toggle_other_purpose_details(frm);
+    },
+    
+    onload: function(frm) {
+        // Set visit_date to today when creating new document
+        if (frm.is_new()) {
+            frm.set_value('visit_date', frappe.datetime.get_today());
+        }
     },
     
     birth_date: function(frm) {
@@ -27,7 +36,14 @@ frappe.ui.form.on("Visitor Register", {
     },
 
     visit_date: function(frm) {
+        // No user input allowed - this field is read only
         calculate_visit_duration(frm);
+        // Update min date for visit_end_date based on visit_date
+        if (frm.doc.visit_date) {
+            frm.set_df_property('visit_end_date', 'options', {
+                minDate: frm.doc.visit_date
+            });
+        }
     },
 
     visit_end_date: function(frm) {
@@ -111,6 +127,43 @@ function set_birth_date_max(frm) {
     });
 }
 
+function set_visit_date_to_today(frm) {
+    // ตั้งวันที่เข้าเป็นวันนี้อัตโนมัติและทำให้เป็น Read Only
+    let today = frappe.datetime.get_today();
+    
+    // Set visit_date to today if empty
+    if (!frm.doc.visit_date) {
+        frm.set_value('visit_date', today);
+    }
+    
+    // Make visit_date read only - ไม่ให้แก้ไขได้
+    frm.set_df_property('visit_date', 'read_only', 1);
+    
+    // วันที่ออกเลือกได้ตั้งแต่วันนี้เป็นต้นไป
+    frm.set_df_property('visit_end_date', 'options', {
+        minDate: today
+    });
+}
+
+function set_security_guard_auto(frm) {
+    // ดึง email ของผู้ใช้ที่ login อยู่
+    let current_user = frappe.session.user;
+    
+    // เช็คว่า User มีอยู่จริงก่อน set ค่า
+    frappe.db.get_value('User', current_user, 'name', (r) => {
+        if (r && r.name) {
+            // ตั้งค่าให้ฟิลด์รปภ. ถ้ายังไม่มีค่า
+            if (frm.is_new() || !frm.doc.security_guard) {
+                frm.set_value('security_guard', current_user);
+            }
+            
+            // ทำให้ฟิลด์เป็น read only - ป้องกันการแก้ไข
+            frm.set_df_property('security_guard', 'read_only', 1);
+        } else {
+            console.log('User not found:', current_user);
+        }
+    });
+}
 function toggle_other_gender_details(frm) {
     if (frm.doc.gender === 'อื่นๆ') {
         frm.set_df_property('other_gender_details', 'reqd', 1);
@@ -258,4 +311,3 @@ function setup_id_field_formatting(frm) {
         });
     }
 }
-
