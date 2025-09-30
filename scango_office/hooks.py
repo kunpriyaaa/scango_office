@@ -10,15 +10,15 @@ app_license = "mit"
 # required_apps = []
 
 # Each item in the list will be shown as an app in the apps page
-# add_to_apps_screen = [
-# 	{
-# 		"name": "scango_office",
-# 		"logo": "/assets/scango_office/logo.png",
-# 		"title": "SCANGO",
-# 		"route": "/scango_office",
+add_to_apps_screen = [
+ 	{
+ 		"name": "scango_office",
+ 		"logo": "/assets/frappe/images/frappe-framework-logo.svg",
+ 		"title": "SCANGO",
+ 		"route": "/app/visit",
 # 		"has_permission": "scango_office.api.permission.has_app_permission"
-# 	}
-# ]
+	}
+]
 
 # Includes in <head>
 # ------------------
