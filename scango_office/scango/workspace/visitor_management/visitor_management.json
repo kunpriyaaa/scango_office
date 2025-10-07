@@ -1,9 +1,14 @@
 {
  "app": "scango_office",
  "charts": [],
- "content": "[{\"id\":\"FTQjaekB_u\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">\u0e23\u0e30\u0e1a\u0e1a\u0e01\u0e32\u0e23\u0e08\u0e31\u0e14\u0e01\u0e32\u0e23\u0e1c\u0e39\u0e49\u0e21\u0e32\u0e15\u0e34\u0e14\u0e15\u0e48\u0e2d</span>\",\"col\":12}},{\"id\":\"xC51MUUlxE\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"\u0e25\u0e07\u0e17\u0e30\u0e40\u0e1a\u0e35\u0e22\u0e19\u0e1c\u0e39\u0e49\u0e40\u0e22\u0e35\u0e48\u0e22\u0e21\u0e0a\u0e21\",\"col\":3}},{\"id\":\"NWP-2pHbV5\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"\u0e1b\u0e23\u0e30\u0e15\u0e39\",\"col\":3}},{\"id\":\"5SRYVrctgD\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"\u0e1a\u0e31\u0e19\u0e17\u0e36\u0e01\u0e01\u0e32\u0e23\u0e40\u0e02\u0e49\u0e32\u0e2d\u0e2d\u0e01\",\"col\":4}}]",
+ "content": "[{\"id\":\"FTQjaekB_u\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">\u0e23\u0e30\u0e1a\u0e1a\u0e01\u0e32\u0e23\u0e08\u0e31\u0e14\u0e01\u0e32\u0e23\u0e1c\u0e39\u0e49\u0e21\u0e32\u0e15\u0e34\u0e14\u0e15\u0e48\u0e2d</span>\",\"col\":12}},{\"id\":\"xC51MUUlxE\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"\u0e25\u0e07\u0e17\u0e30\u0e40\u0e1a\u0e35\u0e22\u0e19\u0e1c\u0e39\u0e49\u0e40\u0e22\u0e35\u0e48\u0e22\u0e21\u0e0a\u0e21\",\"col\":3}},{\"id\":\"NWP-2pHbV5\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"\u0e1b\u0e23\u0e30\u0e15\u0e39\",\"col\":3}},{\"id\":\"5SRYVrctgD\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"\u0e1a\u0e31\u0e19\u0e17\u0e36\u0e01\u0e01\u0e32\u0e23\u0e40\u0e02\u0e49\u0e32\u0e2d\u0e2d\u0e01\",\"col\":4}},{\"id\":\"nt3fL17fQz\",\"type\":\"custom_block\",\"data\":{\"custom_block_name\":\"\u0e01\u0e23\u0e32\u0e1f\u0e2a\u0e16\u0e32\u0e19\u0e30\",\"col\":12}}]",
  "creation": "2025-09-30 21:07:51.391998",
- "custom_blocks": [],
+ "custom_blocks": [
+  {
+   "custom_block_name": "\u0e01\u0e23\u0e32\u0e1f\u0e2a\u0e16\u0e32\u0e19\u0e30",
+   "label": "\u0e01\u0e23\u0e32\u0e1f\u0e2a\u0e16\u0e32\u0e19\u0e30"
+  }
+ ],
  "docstatus": 0,
  "doctype": "Workspace",
  "for_user": "",
@@ -15,7 +20,7 @@
  "label": "Visitor Management",
  "link_type": "DocType",
  "links": [],
- "modified": "2025-10-01 01:37:57.316566",
+ "modified": "2025-10-03 12:16:32.435074",
  "modified_by": "Administrator",
  "module": "SCANGO",
  "name": "Visitor Management",

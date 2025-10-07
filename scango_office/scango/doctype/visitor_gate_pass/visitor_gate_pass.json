@@ -20,6 +20,7 @@
   {
    "fieldname": "visitor_register",
    "fieldtype": "Link",
+   "in_standard_filter": 1,
    "label": "\u0e1c\u0e39\u0e49\u0e40\u0e22\u0e35\u0e48\u0e22\u0e21\u0e0a\u0e21",
    "options": "Visitor Register",
    "read_only": 1,
@@ -87,7 +88,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-09-26 21:35:09.889052",
+ "modified": "2025-10-02 03:00:04.476333",
  "modified_by": "Administrator",
  "module": "SCANGO",
  "name": "Visitor Gate Pass",

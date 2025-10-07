@@ -301,9 +301,30 @@
             },
             methods: {
                 async detect(detectedCodes) {
+
                     if (detectedCodes.length > 0 && this.status === 'scanning') {
                         const qrContent = detectedCodes[0].rawValue;
                         console.log('QR Code detected:', qrContent);
+                        response_check = await frappe.call({
+                        method: "frappe.client.get_list",
+                            args: {
+                                doctype: "Visitor Gate Pass",
+                                filters: {
+                                    "visitor_register": qrContent,
+                                    "action_type":"Checkout"
+                                },
+                                fields: ["*"], // Specify fields to retrieve
+                                limit_page_length: 20 // Optional: Limit the number of records
+                            }
+                        });
+
+                        if (response_check.message) {
+                            console.log("Document List:", response_check.message);
+                            if(response_check.message.length != 0){
+                                alert("ไม่สามารถใช้งาน qr code ซ้ำได้หลังจาก Check Out");
+                                return
+                            }
+                        }
 
                         // Play sound
                         this.playSound();
@@ -316,16 +337,29 @@
                         setTimeout(() => {
                             this.status = 'scanning';
                         }, 1000);
+                         
                     }
                 },
 
                 playSound() {
                     try {
-                        const audio = new Audio('/files/welcome.mp3');
+                        const use_for = "{{machine.use_for}}"
+                        let audio_file ='/files/welcome.mp3'
+                        if (use_for == "Out"){
+                            audio_file = "/assets/scango_office/sound/thankyou.mp3"
+                            console.log("ทดสอบเสียง")
+                        }
+                        if (use_for == "Checkout"){
+                            audio_file = "/assets/scango_office/sound/thankyou.mp3"
+                            console.log("ทดสอบเสียง")
+                        }
+                        const audio = new Audio(audio_file);
+                        
                         audio.play().catch(e => {
                             console.log('MP3 not available, using beep');
                             this.playBeep();
                         });
+                       
                     } catch (e) {
                         this.playBeep();
                     }
@@ -353,7 +387,27 @@
                     }
                 },
 
-                createVisitorGatePass(qrContent) {
+                async createVisitorGatePass(qrContent) {
+                    response_check = await frappe.call({
+                     method: "frappe.client.get_list",
+                        args: {
+                            doctype: "Visitor Gate Pass",
+                            filters: {
+                                "visitor_register": qrContent,
+                                "action_type":"Checkout"
+                            },
+                            fields: ["*"], // Specify fields to retrieve
+                            limit_page_length: 20 // Optional: Limit the number of records
+                        }
+                    });
+
+                    if (response_check.message) {
+                        console.log("Document List:", response_check.message);
+                        if(response_check.message.length != 0){
+                            alert("ไม่สามารถใช้งาน qr code ซ้ำได้หลังจาก Check Out");
+                            return
+                        }
+                    }
                     frappe.call({
                         method: 'frappe.client.insert',
                         args: {
@@ -369,6 +423,15 @@
                         },
                         callback: (response) => {
                             console.log('Visitor Gate Pass created:', response.message.name);
+                            setTimeout(()=>{
+                                 const use_for = "{{machine.use_for}}"
+                                 if(use_for == "CheckStatus"){
+                                     window.location.replace("/qr_scanner?id="+qrContent+"&machine={{machine.machine_id}}");
+
+                                 }
+                           
+                            
+                        },3000)
                         },
                         error: (error) => {
                             console.error('Error creating record:', error);

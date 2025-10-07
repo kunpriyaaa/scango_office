@@ -1,4 +1,4 @@
-# visitor_register.py
+# visitor_register.py (ไฟล์เต็ม - แก้ไขแล้ว)
 
 import frappe
 from frappe.model.document import Document
@@ -23,7 +23,6 @@ class VisitorRegister(Document):
             'last_name': 'นามสกุล'
         }
         
-        # Pattern for Thai and English characters only (including spaces)
         pattern = r'^[a-zA-Zก-๙\s]+$'
         
         for field_name, label in name_fields.items():
@@ -35,7 +34,6 @@ class VisitorRegister(Document):
                         title="ข้อมูลไม่ถูกต้อง"
                     )
                 
-                # Check for consecutive spaces or leading/trailing spaces
                 if '  ' in value or value != value.strip():
                     frappe.throw(
                         f"ช่อง {label} ไม่ควรมีช่องว่างซ้ำกันหรือเว้นวรรคหน้า-หลัง",
@@ -62,19 +60,15 @@ class VisitorRegister(Document):
         """Validate Thai National ID (13 digits)"""
         national_id = self.thai_national_id.replace('-', '').replace(' ', '')
         
-        # Only validate if user seems done entering (has some content)
-        # Don't validate if clearly incomplete (less than 10 digits)
         if len(national_id) < 10:
             return
             
-        # Check if it's exactly 13 digits
         if not national_id.isdigit() or len(national_id) != 13:
             frappe.throw(
                 "เลขบัตรประชาชนต้องเป็นตัวเลข 13 หลักเท่านั้น",
                 title="เลขบัตรประชาชนไม่ถูกต้อง"
             )
         
-        # Thai National ID checksum validation
         if not self.is_valid_thai_id(national_id):
             frappe.throw(
                 "เลขบัตรประชาชนไม่ถูกต้องตามหลักการคำนวณ",
@@ -86,7 +80,6 @@ class VisitorRegister(Document):
         if len(national_id) != 13:
             return False
         
-        # Calculate checksum
         sum_value = 0
         for i in range(12):
             sum_value += int(national_id[i]) * (13 - i)
@@ -98,7 +91,6 @@ class VisitorRegister(Document):
     
     def validate_passport_number(self):
         """No validation required for passport number"""
-        # Only convert to uppercase, don't restrict format since each country is different
         if self.passport_number:
             self.passport_number = self.passport_number.upper()
         return
@@ -134,10 +126,8 @@ class VisitorRegister(Document):
             self.age = None
             return
         
-        # Calculate age
         age = today.year - birth_date.year
         
-        # Adjust if birthday hasn't occurred this year
         if (today.month, today.day) < (birth_date.month, birth_date.day):
             age -= 1
         
@@ -146,11 +136,9 @@ class VisitorRegister(Document):
     def validate_visit_dates(self):
         """Validate visit dates"""
         from frappe.utils import getdate, today
-        from datetime import date
         
         today_date = getdate(today())
         
-        # ตรวจสอบวันที่เข้า - ต้องเป็นวันนี้เท่านั้น
         if self.visit_date:
             start_date = getdate(self.visit_date)
             if start_date != today_date:
@@ -159,7 +147,6 @@ class VisitorRegister(Document):
                     title="วันที่ไม่ถูกต้อง"
                 )
         
-        # ตรวจสอบวันที่ออก - สามารถเป็นวันนี้หรืออนาคตได้
         if self.visit_date and self.visit_end_date:
             start_date = getdate(self.visit_date)
             end_date = getdate(self.visit_end_date)
@@ -197,21 +184,18 @@ class VisitorRegister(Document):
 
     def before_save(self):
         """Clean up data and generate QR code before saving"""
-        # Clean up name fields (remove extra spaces)
         name_fields = ['first_name', 'middle_name', 'last_name']
         for field in name_fields:
             if self.get(field):
                 cleaned_value = ' '.join(self.get(field).split())
                 self.set(field, cleaned_value)
         
-        # Clean up ID fields
         if self.thai_national_id:
             self.thai_national_id = self.thai_national_id.replace('-', '').replace(' ', '')
         
         if self.passport_number:
             self.passport_number = self.passport_number.upper().replace(' ', '')
         
-        # Generate QR Code when visitor photo and terms acceptance are complete
         if self.visitor_photo and self.terms_accepted:
             self.generate_qr_code()
 
@@ -225,25 +209,21 @@ class VisitorRegister(Document):
             return
         
         try:
-            # Generate QR code with ID only (เก็บเฉพาะ ID)
             qr = qrcode.QRCode(
                 version=1,
                 error_correction=qrcode.constants.ERROR_CORRECT_L,
                 box_size=10,
                 border=4,
             )
-            qr.add_data(self.name)  # เก็บเฉพาะ ID เช่น 25-09-30-REG-001
+            qr.add_data(self.name)
             qr.make(fit=True)
             
-            # Create QR code image
             qr_img = qr.make_image(fill_color="black", back_color="white")
             
-            # Convert image to base64 string
             img_buffer = io.BytesIO()
             qr_img.save(img_buffer, format='PNG')
             img_str = base64.b64encode(img_buffer.getvalue()).decode()
             
-            # Save as file attachment
             from frappe.utils.file_manager import save_file
             file_doc = save_file(
                 fname=f"qr_code_{self.name}.png",
@@ -253,7 +233,6 @@ class VisitorRegister(Document):
                 is_private=1
             )
             
-            # Set the QR code field to reference the file
             self.qr_code = file_doc.file_url
             
             frappe.msgprint(
@@ -275,3 +254,155 @@ class VisitorRegister(Document):
                 title="ข้อผิดพลาด",
                 indicator="red"
             )
+
+
+# ==================== Gate Pass Functions ====================
+
+@frappe.whitelist()
+def check_qr_status(visitor_id):
+    """Check if visitor can check in (not checked out yet)"""
+    try:
+        visitor = frappe.get_doc("Visitor Register", visitor_id)
+        
+        # ตรวจสอบว่ามี Checkout record หรือยัง (ตรวจสอบเข้มงวด)
+        checkout_records = frappe.get_all("Visitor Gate Pass", 
+            filters={
+                "visitor_register": visitor_id,
+                "action_type": "Checkout"
+            },
+            limit=1
+        )
+        
+        if checkout_records:
+            return {
+                "valid": False,
+                "message": "QR Code นี้ถูกใช้ Checkout ไปแล้ว ไม่สามารถใช้งานอีกได้",
+                "status": "checked_out",
+                "checkout_time": checkout_records[0].get("scan_datetime")
+            }
+        
+        # ตรวจสอบวันหมดอายุ
+        from frappe.utils import getdate, today
+        today_date = getdate(today())
+        
+        if visitor.visit_date:
+            start_date = getdate(visitor.visit_date)
+            if today_date < start_date:
+                return {
+                    "valid": False,
+                    "message": "QR Code ยังไม่ถึงวันที่ใช้งาน",
+                    "status": "not_started"
+                }
+        
+        if visitor.visit_end_date:
+            end_date = getdate(visitor.visit_end_date)
+            if today_date > end_date:
+                return {
+                    "valid": False,
+                    "message": "QR Code หมดอายุแล้ว",
+                    "status": "expired"
+                }
+        
+        return {
+            "valid": True,
+            "message": "QR Code ใช้งานได้",
+            "status": "active",
+            "visitor": visitor.as_dict()
+        }
+        
+    except frappe.DoesNotExistError:
+        return {
+            "valid": False,
+            "message": "ไม่พบข้อมูลผู้เยี่ยมชม",
+            "status": "not_found"
+        }
+    except Exception as e:
+        frappe.log_error(f"Check QR Status Error: {str(e)}")
+        return {
+            "valid": False,
+            "message": f"เกิดข้อผิดพลาด: {str(e)}",
+            "status": "error"
+        }
+
+
+@frappe.whitelist()
+def process_gate_scan(visitor_id, gate_machine, building_gate, building_name, action_type):
+    """
+    Process QR scan at gate
+    action_type: 'In', 'Out', 'CheckStatus', หรือ 'Checkout'
+    """
+    try:
+        # ตรวจสอบสถานะ QR ก่อนเสมอ (ยกเว้น CheckStatus)
+        status = check_qr_status(visitor_id)
+        
+        # ถ้าเป็น CheckStatus ให้ดูสถานะอย่างเดียว ไม่บันทึก
+        if action_type == "CheckStatus":
+            return status
+        
+        # สำหรับ In, Out, Checkout - ต้อง valid เท่านั้น
+        if not status["valid"]:
+            # ห้ามบันทึก gate pass ถ้า QR ไม่ valid
+            frappe.throw(status["message"], title="QR Code ไม่สามารถใช้งานได้")
+        
+        visitor = frappe.get_doc("Visitor Register", visitor_id)
+        
+        # บันทึกการแสกนใน Visitor Gate Pass
+        gate_pass = frappe.get_doc({
+            "doctype": "Visitor Gate Pass",
+            "visitor_register": visitor_id,
+            "visitor_name": visitor.first_name or "",
+            "visitor_last_name": visitor.last_name or "",
+            "gate_machine": gate_machine,
+            "building_gate": building_gate,
+            "building_name": building_name,
+            "action_type": action_type,
+            "scan_datetime": frappe.utils.now_datetime()
+        })
+        gate_pass.insert(ignore_permissions=True)
+        frappe.db.commit()
+        
+        messages = {
+            "In": "เข้าสถานที่สำเร็จ",
+            "Out": "ออกจากสถานที่สำเร็จ",
+            "Checkout": "Checkout สำเร็จ - QR Code ถูกปิดการใช้งานถาวร"
+        }
+        
+        return {
+            "valid": True,
+            "message": messages.get(action_type, "บันทึกสำเร็จ"),
+            "status": "success",
+            "action_type": action_type,
+            "visitor": visitor.as_dict(),
+            "gate_pass": gate_pass.name
+        }
+        
+    except Exception as e:
+        frappe.log_error(f"Gate Scan Error: {str(e)}")
+        return {
+            "valid": False,
+            "message": f"เกิดข้อผิดพลาด: {str(e)}",
+            "status": "error"
+        }
+
+
+@frappe.whitelist()
+def get_gate_pass_history(visitor_id):
+    """Get all gate pass history for a visitor"""
+    try:
+        history = frappe.get_all("Visitor Gate Pass",
+            filters={"visitor_register": visitor_id},
+            fields=["name", "visitor_name", "visitor_last_name", "gate_machine", 
+                    "building_gate", "building_name", "action_type", "scan_datetime"],
+            order_by="scan_datetime desc"
+        )
+        
+        return {
+            "success": True,
+            "history": history,
+            "total_scans": len(history)
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "message": str(e)
+        }
